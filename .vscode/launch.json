@@ -1,0 +1,34 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Dart: Run main.dart",
+            "type": "dart",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/help.dart",
+            "args": [
+                "-h",
+            ]
+        },
+        {
+            "name": "Dart: Run with Feature",
+            "type": "dart",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/flutter_fast.dart",
+            "args": [
+                "-g",
+                ""
+            ]
+        },
+        // {
+        //     "name": "Flutter: Run",
+        //     "type": "dart",
+        //     "request": "launch",
+        //     "program": "${workspaceFolder}/lib/flutter_fast.dart",
+        //     "args": [
+        //         ""
+        //     ],
+        //     "flutterMode": "debug"
+        // }
+    ]
+}
