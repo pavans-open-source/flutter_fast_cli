@@ -6,6 +6,9 @@ import '../utils/formatters.dart';
 
 class AssetGenerator {
 
+ /// The function `_updatePubspecAndGenerateFiles` checks for the existence of a pubspec.yaml file,
+ /// creates a backup, modifies the file by adding assets paths for icons and images, and then updates
+ /// the pubspec.yaml file accordingly.
   void _updatePubspecAndGenerateFiles() {
     final pubspecFile = File('$pwd/pubspec.yaml');
     final backupFile = File('$pwd/pubspec.yaml.bak');
@@ -80,7 +83,8 @@ class AssetGenerator {
     }
   }
 
-  // Generate Dart files for each feature's assets
+/// The `_generateDartFiles` function creates Dart files with static asset paths based on the directory
+/// structure of assets in a specified directory.
   void _generateDartFiles() async {
     final assetDir = Directory('assets');
 
@@ -144,7 +148,8 @@ class AssetGenerator {
     }
   }
 
-  // Main method to start asset generation
+/// The function `onGenerateAssets` logs a debug message, updates the pubspec file and generates files,
+/// then logs a success message.
   Future<void> onGenerateAssets() async {
     Logger.logDebug('Starting asset generation...');
     _updatePubspecAndGenerateFiles();

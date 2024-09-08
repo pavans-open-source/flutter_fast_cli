@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 import '../logger/logger.dart';
 
+/// The `Help` class provides information on various command line options and exits the program.
 class Help {
   onHelp(ArgResults argResult) {
     Logger.logCommand('\n-f feature_name : it is used to generate a feature');

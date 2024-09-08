@@ -2,6 +2,7 @@ import '../commands/asset_generator.dart';
 import '../commands/feature_generator.dart';
 import '../commands/library_generator.dart';
 
+/// The `Generate` class contains methods for generating assets, libraries, and features.
 class Generate {
   onAssetGenerate()async {
     AssetGenerator().onGenerateAssets();
