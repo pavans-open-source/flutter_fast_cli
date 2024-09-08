@@ -1,145 +1,158 @@
 import 'dart:io';
+import 'package:dcli/dcli.dart'; // Ensure dcli is imported
 
-import 'package:dcli/dcli.dart';
-import 'package:args/args.dart';
+import '../logger/logger.dart';
+import '../utils/formatters.dart';
 
 class AssetGenerator {
-  String _capitalize(String str) {
-    if (str.isEmpty) return str;
-    return str[0].toUpperCase() + str.substring(1).toLowerCase();
-  }
+  // Helper function to capitalize strings
 
-  String _toCamelCase(String str) {
-    List<String> words = str.split('_');
-    if (words.isEmpty) return str;
+  // Helper function to convert snake_case to camelCase
 
-    // Lowercase the first word and capitalize the rest
-    return words.asMap().entries.map((entry) {
-      if (entry.key == 0) {
-        return entry.value.toLowerCase();
-      } else {
-        return _capitalize(entry.value);
+  // Update or create assets section in pubspec.yaml
+  void _updatePubspecAndGenerateFiles() {
+    final pubspecFile = File('$pwd/pubspec.yaml');
+    final backupFile = File('$pwd/pubspec.yaml.bak');
+
+    Logger.logDebug('Checking for pubspec.yaml file...');
+    Logger.logDebug('Current Directory: $pwd');
+
+    try {
+      // Verify if pubspec.yaml exists
+      if (!pubspecFile.existsSync()) {
+        Logger.logError('pubspec.yaml not found!');
+        exit(1); // Exit if file not found
       }
-    }).join('');
-  }
 
-  void _updatePubspec() async {
-    final pubspecFile = File('pubspec.yaml');
-    final backupFile = File('pubspec.yaml.bak');
+      Logger.logSuccess('pubspec.yaml found.');
 
-    if (!await pubspecFile.exists()) {
-      print('pubspec.yaml not found!');
+      // Backup pubspec.yaml
+      Logger.logDebug('Creating backup of pubspec.yaml...');
+      pubspecFile.copySync(backupFile.path);
+      Logger.logSuccess('Backup created: pubspec.yaml.bak');
+
+      // Read lines from pubspec.yaml
+      List<String> lines = pubspecFile.readAsLinesSync();
+      List<String> newLines = [];
+      bool inFlutterSection = false;
+      bool assetsFound = false;
+
+      // Check if assets: section exists and rewrite file
+      for (var line in lines) {
+        if (line.trim().startsWith('flutter:')) {
+          inFlutterSection = true;
+        }
+
+        if (inFlutterSection && line.trim().startsWith('assets:')) {
+          assetsFound = true;
+          continue;
+        }
+        newLines.add(line);
+      }
+
+      if (!assetsFound) {
+        // Create a new assets section if not found
+        newLines.add('  assets:');
+      } else {
+        // Remove existing assets paths before adding new ones
+        newLines.remove(' assets:');
+        newLines.add('  assets:');
+        newLines.removeWhere((line) => line.contains('    - assets/'));
+      }
+
+      // Add assets paths for icons and images
+      final assetDir = Directory('assets');
+      if (assetDir.existsSync()) {
+        for (var entity in assetDir.listSync()) {
+          if (entity is Directory) {
+            String featureName = entity.uri.path;
+            newLines.add('    - ${featureName}icons/');
+            newLines.add('    - ${featureName}images/');
+          }
+        }
+      }
+
+      // Write updated content back to pubspec.yaml
+      Logger.logDebug('Updating pubspec.yaml...');
+      pubspecFile.writeAsStringSync(newLines.join('\n'));
+      Logger.logSuccess('pubspec.yaml updated successfully.');
+
+      _generateDartFiles();
+    } catch (e) {
+      Logger.logError('An error occurred: $e');
       exit(1);
     }
-
-    // Backup the original pubspec.yaml
-    await pubspecFile.copy(backupFile.path);
-    List<String> lines = await pubspecFile.readAsLines();
-
-    // Create a temporary list to hold the new content
-    List<String> newLines = [];
-    bool inFlutterSection = false;
-
-    for (var line in lines) {
-      // Start writing to temp when we hit flutter section
-      if (line.trim().startsWith('flutter:')) {
-        inFlutterSection = true;
-      }
-
-      if (inFlutterSection && line.trim().startsWith('assets:')) {
-        // Skip existing assets section
-        while (line.isNotEmpty && line.trim().isNotEmpty) {
-          line = (await pubspecFile.readAsLines())[newLines.length];
-        }
-        continue;
-      }
-
-      newLines.add(line);
-    }
-
-    // Add the new assets section
-    newLines.add('  assets:');
-    final assetDir = Directory('assets');
-
-    if (await assetDir.exists()) {
-      await for (var entity in assetDir.list()) {
-        if (entity is Directory) {
-          String featureName = entity.uri.pathSegments.last;
-          newLines.add('    - assets/$featureName/icons/');
-          newLines.add('    - assets/$featureName/images/');
-        }
-      }
-    }
-
-    // Write the updated content to pubspec.yaml
-    await pubspecFile.writeAsString(newLines.join('\n'));
-
-    print('pubspec.yaml updated successfully.');
-
-    print('Generating files...');
   }
 
+  // Generate Dart files for each feature's assets
   void _generateDartFiles() async {
     final assetDir = Directory('assets');
 
-    if (!await assetDir.exists()) {
-      print('assets directory not found!');
-      return;
+    if (!assetDir.existsSync()) {
+      Logger.logWarning('assets directory not found!');
+      assetDir.createSync();
+      Logger.logDebug('Creating assets directory..');
+      await Future.delayed(Duration(seconds: 1));
+      Logger.logSuccess('assets directory created!');
     }
 
-    await for (var featureDir in assetDir.list()) {
+    for (var featureDir in assetDir.listSync()) {
       if (featureDir is Directory) {
-        String featureName = featureDir.uri.pathSegments.last;
-        String capitalizedFeatureName = _capitalize(featureName);
+        String featureName = featureDir.path.split('/').last;
+        String capitalizedFeatureName = Formatters().capitalize(featureName);
+        print(featureName);
         String outputFilePath =
             'lib/features/$featureName/static/assets/${featureName}_screen_assets.dart';
 
-        // Create output directories if they don't exist
         File outputFile = File(outputFilePath);
-        await outputFile.create(recursive: true);
+        outputFile.createSync(recursive: true);
 
-        // Start writing the Dart file
-        IOSink sink = outputFile.openWrite();
-        sink.writeln('class ${capitalizedFeatureName}ScreenAssets {');
+        // Create content for the Dart file
+        StringBuffer fileContent = StringBuffer();
+        fileContent.writeln('class ${capitalizedFeatureName}ScreenAssets {');
 
-        // Add icon paths
+        // Add icons
         var iconsDir = Directory('${featureDir.path}/icons');
-        if (await iconsDir.exists()) {
-          await for (var icon in iconsDir.list()) {
+        if (iconsDir.existsSync()) {
+          for (var icon in iconsDir.listSync()) {
             if (icon is File) {
               String iconName = icon.uri.pathSegments.last;
               String baseName = iconName.split('.').first;
-              String camelCaseName = _toCamelCase(baseName);
-              sink.writeln(
+              String camelCaseName = Formatters().toCamelCase(baseName);
+              fileContent.writeln(
                   "  static const String $camelCaseName = 'assets/$featureName/icons/$iconName';");
             }
           }
         }
 
-        // Add image paths
+        // Add images
         var imagesDir = Directory('${featureDir.path}/images');
-        if (await imagesDir.exists()) {
-          await for (var image in imagesDir.list()) {
+        if (imagesDir.existsSync()) {
+          for (var image in imagesDir.listSync()) {
             if (image is File) {
               String imageName = image.uri.pathSegments.last;
               String baseName = imageName.split('.').first;
-              String camelCaseName = _toCamelCase(baseName);
-              sink.writeln(
+              String camelCaseName = Formatters().toCamelCase(baseName);
+              fileContent.writeln(
                   "  static const String $camelCaseName = 'assets/$featureName/images/$imageName';");
             }
           }
         }
 
-        sink.writeln('}');
-        await sink.close();
+        fileContent.writeln('}');
 
-        print('Generated Dart file: $outputFilePath');
+        // Write content to file
+        outputFile.writeAsStringSync(fileContent.toString());
+        Logger.logSuccess('Generated Dart file: $outputFilePath');
       }
     }
   }
 
-  onGenerateAssets() {
-    _updatePubspec();
-    _generateDartFiles();
+  // Main method to start asset generation
+  Future<void> onGenerateAssets() async {
+    Logger.logDebug('Starting asset generation...');
+    _updatePubspecAndGenerateFiles();
+
+    Logger.logSuccess('Asset generation completed successfully.');
   }
 }
