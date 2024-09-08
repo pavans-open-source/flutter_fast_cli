@@ -40,3 +40,5 @@ Generate Library:
 ```shell
 flutter_fast -l library_name
 ```
+
+Detailed documentation on Medium - https://medium.com/@pavansn.2000/boost-your-flutter-project-setup-with-flutter-fast-5b2c284fbf8a
