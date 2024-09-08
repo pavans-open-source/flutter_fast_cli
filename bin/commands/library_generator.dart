@@ -9,7 +9,7 @@ class LibraryGenerator {
   onGenerateLibrary(String? libraryName) {
     try {
       final libraryTemplate = '''
-class $libraryName {}
+class ${Formatters().capitalize(libraryName ?? '')} {}
 ''';
 
       final libraryFolder = '$pwd/lib/libraries';

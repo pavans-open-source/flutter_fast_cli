@@ -5,6 +5,7 @@ import '../logger/logger.dart';
 import '../commands/help.dart';
 import 'package:args/args.dart';
 import '../commands/generate.dart';
+import '../commands/initialize.dart';
 
 class Init {
   onInit(List<String> arguments) {
@@ -17,6 +18,12 @@ class Init {
     parser.addFlag(
       'help',
       abbr: 'h',
+      help: 'Show available options',
+    );
+
+    parser.addFlag(
+      'initialize',
+      abbr: 'i',
       help: 'Show available options',
     );
 
@@ -51,6 +58,8 @@ class Init {
       Generate().onFeatureGenerate(argResult['feature']);
     } else if (argResult.wasParsed('help')) {
       Help().onHelp(argResult);
+    } else if (argResult.wasParsed('initialize')) {
+      Initialize().initializeFastStructure();
     }
   }
 

@@ -9,6 +9,7 @@ class Help {
     Logger.logCommand('-a assets: it is used to generate asset files');
     Logger.logCommand('-l library_name : it is used to generate library');
     Logger.logCommand('-h --help : it is used to get help\n');
+    Logger.logCommand('-i : It initailizes your project with basic structure');
     exit(0);
   }
 }

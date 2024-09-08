@@ -5,11 +5,7 @@ import '../logger/logger.dart';
 import '../utils/formatters.dart';
 
 class AssetGenerator {
-  // Helper function to capitalize strings
 
-  // Helper function to convert snake_case to camelCase
-
-  // Update or create assets section in pubspec.yaml
   void _updatePubspecAndGenerateFiles() {
     final pubspecFile = File('$pwd/pubspec.yaml');
     final backupFile = File('$pwd/pubspec.yaml.bak');
