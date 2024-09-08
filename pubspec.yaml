@@ -1,6 +1,6 @@
 name: flutter_fast
 description: flutter_fast is a versatile CLI tool designed to streamline your Flutter development workflow. It provides a range of functionalities to enhance productivity, including managing Flutter environments, generating code assets, and handling common development tasks efficiently.
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/pavans-open-source/flutter_fast_cli.git
 # repository: https://github.com/my_org/my_repo
 
@@ -16,3 +16,6 @@ dev_dependencies:
 dependencies:
   dcli: ^6.0.5
   args: ^2.5.0
+
+executables:
+  flutter_fast: bin/flutter_fast.dart
