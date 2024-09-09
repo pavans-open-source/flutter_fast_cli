@@ -4,6 +4,9 @@ import 'package:dcli/dcli.dart';
 import '../utils/formatters.dart';
 
 class FeatureGenerator {
+  final featureFolder = 'lib/features';
+  feturePath(String? featureName) => '$featureFolder/$featureName';
+
   /// The function `onGenerateFeature` generates code templates for a new feature in a Flutter project
   /// based on the provided feature name.
   ///
@@ -12,19 +15,45 @@ class FeatureGenerator {
   /// feature you want to generate. It is used to create the necessary files and folder structure for a
   /// new feature in a Flutter project.
   onGenerateFeature(String? featureName) {
-    const featureFolder = 'lib/features';
+    _checkPubspecInCurrDir();
+    _validateFeatureName(featureName);
+    _checkFeatureExists(featureName);
+    _createAFeatureWithContents(featureName);
+  }
 
+  _validateFeatureName(String? featureName) {
     if (featureName == null || featureName.isEmpty) {
       print('Usage: dart run -f <feature_name>');
       exit(1);
     }
+  }
 
+  _checkPubspecInCurrDir() {
+    if (!File('pubspec.yaml').existsSync()) {
+      print('Please run this from the project level directory.');
+      exit(1);
+    }
+  }
+
+  _checkFeatureExists(String? featureName) {
     final featurePath = '$featureFolder/$featureName';
+    if (Directory(featurePath).existsSync()) {
+      final choice = ask(
+          'The feature \'$featureName\' already exists. Do you want to override it? (y/n): ');
+      if (choice.toLowerCase() != 'y') {
+        print('Operation cancelled.');
+        exit(1);
+      } else {
+        print('Overriding the existing feature...');
+      }
+    }
+  }
 
-    final camelCase = Formatters().toCamelCase(featureName);
+  _createAFeatureWithContents(String? featureName) {
+    final camelCase = Formatters().toCamelCase(featureName!);
     final capitalizedCamelCase = Formatters().capitalize(camelCase);
 
-    final viewTemplate = '''
+    final String viewTemplate = '''
 import 'package:flutter/material.dart';
 import '../controllers/${featureName}_screen_controller.dart';
 
@@ -91,24 +120,14 @@ sealed class ${capitalizedCamelCase}ScreenState {}
 final class ${capitalizedCamelCase}ScreenInitial extends ${capitalizedCamelCase}ScreenState {}
 ''';
 
-    if (!File('pubspec.yaml').existsSync()) {
-      print('Please run this from the project level directory.');
-      exit(1);
-    }
-
-    if (Directory(featurePath).existsSync()) {
-      final choice = ask(
-          'The feature \'$featureName\' already exists. Do you want to override it? (y/n): ');
-      if (choice.toLowerCase() != 'y') {
-        print('Operation cancelled.');
-        exit(1);
-      } else {
-        print('Overriding the existing feature...');
-      }
-    }
-
-    createFeatureStructure(featureName, featurePath, viewTemplate,
-        controllerTemplate, cubitTemplate, cubitStateTemplate);
+    _setContentToFiles(
+      featureName,
+      feturePath(featureName),
+      viewTemplate,
+      controllerTemplate,
+      cubitTemplate,
+      cubitStateTemplate,
+    );
 
     print('Feature \'$featureName\' has been created successfully.');
   }
@@ -139,13 +158,14 @@ final class ${capitalizedCamelCase}ScreenInitial extends ${capitalizedCamelCase}
   /// function is a String that represents the template for the state class of a Cubit in a Flutter
   /// feature. This template is used to generate the code for the state class of the Cubit associated with
   /// a specific feature in the Flutter
-  void createFeatureStructure(
-      String featureName,
-      String featurePath,
-      String viewTemplate,
-      String controllerTemplate,
-      String cubitTemplate,
-      String cubitStateTemplate) {
+  void _setContentToFiles(
+    String featureName,
+    String featurePath,
+    String viewTemplate,
+    String controllerTemplate,
+    String cubitTemplate,
+    String cubitStateTemplate,
+  ) {
     final directories = [
       '$featurePath/views',
       '$featurePath/controllers',
@@ -164,15 +184,22 @@ final class ${capitalizedCamelCase}ScreenInitial extends ${capitalizedCamelCase}
       Directory(dir).createSync(recursive: true);
     }
 
-    writeFile('$featurePath/views/${featureName}_screen.dart', viewTemplate);
-    writeFile('$featurePath/controllers/${featureName}_screen_controller.dart',
-        controllerTemplate);
-    writeFile(
-        '$featurePath/logic/${featureName}_cubit/${featureName}_screen_cubit.dart',
-        cubitTemplate);
-    writeFile(
-        '$featurePath/logic/${featureName}_cubit/${featureName}_screen_state.dart',
-        cubitStateTemplate);
+    _writeFile(
+      '$featurePath/views/${featureName}_screen.dart',
+      viewTemplate,
+    );
+    _writeFile(
+      '$featurePath/controllers/${featureName}_screen_controller.dart',
+      controllerTemplate,
+    );
+    _writeFile(
+      '$featurePath/logic/${featureName}_cubit/${featureName}_screen_cubit.dart',
+      cubitTemplate,
+    );
+    _writeFile(
+      '$featurePath/logic/${featureName}_cubit/${featureName}_screen_state.dart',
+      cubitStateTemplate,
+    );
   }
 
   /// The `writeFile` function in Dart writes the specified content to a file at the given file path.
@@ -183,7 +210,7 @@ final class ${capitalizedCamelCase}ScreenInitial extends ${capitalizedCamelCase}
   ///   content (String): The `content` parameter in the `writeFile` function represents the text or data
   /// that you want to write to the file specified by the `filePath` parameter. It is the actual content
   /// that will be written to the file.
-  void writeFile(String filePath, String content) {
+  void _writeFile(String filePath, String content) {
     File(filePath).writeAsStringSync(content);
   }
 }

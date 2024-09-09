@@ -5,11 +5,10 @@ import '../logger/logger.dart';
 import '../utils/formatters.dart';
 
 class AssetGenerator {
-
- /// The function `_updatePubspecAndGenerateFiles` checks for the existence of a pubspec.yaml file,
- /// creates a backup, modifies the file by adding assets paths for icons and images, and then updates
- /// the pubspec.yaml file accordingly.
-  void _updatePubspecAndGenerateFiles() {
+  /// The function `_updatePubspecAndGenerateFiles` checks for the existence of a pubspec.yaml file,
+  /// creates a backup, modifies the file by adding assets paths for icons and images, and then updates
+  /// the pubspec.yaml file accordingly.
+  void _updatePubspec() {
     final pubspecFile = File('$pwd/pubspec.yaml');
     final backupFile = File('$pwd/pubspec.yaml.bak');
 
@@ -75,16 +74,14 @@ class AssetGenerator {
       Logger.logDebug('Updating pubspec.yaml...');
       pubspecFile.writeAsStringSync(newLines.join('\n'));
       Logger.logSuccess('pubspec.yaml updated successfully.');
-
-      _generateDartFiles();
     } catch (e) {
       Logger.logError('An error occurred: $e');
       exit(1);
     }
   }
 
-/// The `_generateDartFiles` function creates Dart files with static asset paths based on the directory
-/// structure of assets in a specified directory.
+  /// The `_generateDartFiles` function creates Dart files with static asset paths based on the directory
+  /// structure of assets in a specified directory.
   void _generateDartFiles() async {
     final assetDir = Directory('assets');
 
@@ -148,12 +145,13 @@ class AssetGenerator {
     }
   }
 
-/// The function `onGenerateAssets` logs a debug message, updates the pubspec file and generates files,
-/// then logs a success message.
+  /// The function `onGenerateAssets` logs a debug message, updates the pubspec file and generates files,
+  /// then logs a success message.
   Future<void> onGenerateAssets() async {
     Logger.logDebug('Starting asset generation...');
-    _updatePubspecAndGenerateFiles();
-
+    _updatePubspec();
+    Logger.logDebug('pubspec.yaml file updated successfully...!');
+    _generateDartFiles();
     Logger.logSuccess('Asset generation completed successfully.');
   }
 }
