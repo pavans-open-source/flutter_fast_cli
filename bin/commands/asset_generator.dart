@@ -5,9 +5,6 @@ import '../logger/logger.dart';
 import '../utils/formatters.dart';
 
 class AssetGenerator {
-  /// The function `_updatePubspecAndGenerateFiles` checks for the existence of a pubspec.yaml file,
-  /// creates a backup, modifies the file by adding assets paths for icons and images, and then updates
-  /// the pubspec.yaml file accordingly.
   void _updatePubspec() {
     final pubspecFile = File('$pwd/pubspec.yaml');
     final backupFile = File('$pwd/pubspec.yaml.bak');
@@ -16,26 +13,22 @@ class AssetGenerator {
     Logger.logDebug('Current Directory: $pwd');
 
     try {
-      // Verify if pubspec.yaml exists
       if (!pubspecFile.existsSync()) {
         Logger.logError('pubspec.yaml not found!');
-        exit(1); // Exit if file not found
+        exit(1); 
       }
 
       Logger.logSuccess('pubspec.yaml found.');
 
-      // Backup pubspec.yaml
       Logger.logDebug('Creating backup of pubspec.yaml...');
       pubspecFile.copySync(backupFile.path);
       Logger.logSuccess('Backup created: pubspec.yaml.bak');
 
-      // Read lines from pubspec.yaml
       List<String> lines = pubspecFile.readAsLinesSync();
       List<String> newLines = [];
       bool inFlutterSection = false;
       bool assetsFound = false;
 
-      // Check if assets: section exists and rewrite file
       for (var line in lines) {
         if (line.trim().startsWith('flutter:')) {
           inFlutterSection = true;
@@ -49,16 +42,13 @@ class AssetGenerator {
       }
 
       if (!assetsFound) {
-        // Create a new assets section if not found
         newLines.add('  assets:');
       } else {
-        // Remove existing assets paths before adding new ones
         newLines.remove(' assets:');
         newLines.add('  assets:');
         newLines.removeWhere((line) => line.contains('    - assets/'));
       }
 
-      // Add assets paths for icons and images
       final assetDir = Directory('assets');
       if (assetDir.existsSync()) {
         for (var entity in assetDir.listSync()) {
@@ -70,7 +60,6 @@ class AssetGenerator {
         }
       }
 
-      // Write updated content back to pubspec.yaml
       Logger.logDebug('Updating pubspec.yaml...');
       pubspecFile.writeAsStringSync(newLines.join('\n'));
       Logger.logSuccess('pubspec.yaml updated successfully.');
@@ -80,8 +69,6 @@ class AssetGenerator {
     }
   }
 
-  /// The `_generateDartFiles` function creates Dart files with static asset paths based on the directory
-  /// structure of assets in a specified directory.
   void _generateDartFiles() async {
     final assetDir = Directory('assets');
 
@@ -104,11 +91,9 @@ class AssetGenerator {
         File outputFile = File(outputFilePath);
         outputFile.createSync(recursive: true);
 
-        // Create content for the Dart file
         StringBuffer fileContent = StringBuffer();
         fileContent.writeln('class ${capitalizedFeatureName}ScreenAssets {');
 
-        // Add icons
         var iconsDir = Directory('${featureDir.path}/icons');
         if (iconsDir.existsSync()) {
           for (var icon in iconsDir.listSync()) {
@@ -122,7 +107,6 @@ class AssetGenerator {
           }
         }
 
-        // Add images
         var imagesDir = Directory('${featureDir.path}/images');
         if (imagesDir.existsSync()) {
           for (var image in imagesDir.listSync()) {
@@ -145,8 +129,6 @@ class AssetGenerator {
     }
   }
 
-  /// The function `onGenerateAssets` logs a debug message, updates the pubspec file and generates files,
-  /// then logs a success message.
   Future<void> onGenerateAssets() async {
     Logger.logDebug('Starting asset generation...');
     _updatePubspec();

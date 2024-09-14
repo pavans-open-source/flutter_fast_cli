@@ -1,11 +1,8 @@
 import 'dart:io';
 
-
 import '../logger/logger.dart';
 
-class Initialize {
-/// The `initializeFastStructure` function sets up the basic structure for a Dart project by creating
-/// folders, initializing files, and setting up project features.
+class InitializeFast {
   initializeFastStructure() {
     _createFeatureFolder();
     _createLibraryFolder();
@@ -16,7 +13,6 @@ class Initialize {
     _initMain();
   }
 
-/// The function `_createFeatureFolder` creates a directory named 'feature' inside the 'lib' directory.
   _createFeatureFolder() {
     try {
       final featureDir = Directory('lib/feature');
@@ -26,8 +22,6 @@ class Initialize {
     }
   }
 
-/// The function `_createLibraryFolder` creates a directory named 'libraries' inside the 'lib'
-/// directory.
   _createLibraryFolder() {
     try {
       final librariesDir = Directory('lib/libraries');
@@ -37,8 +31,6 @@ class Initialize {
     }
   }
 
-/// The function `_initPubspecFile` creates a backup of the pubspec.yaml file and writes a new
-/// pubspec.yaml file with specified content.
   _initPubscpecFile() {
     try {
       final pubSpecFile = File('pubspec.yaml');
@@ -59,8 +51,6 @@ class Initialize {
     }
   }
 
-/// The function `_initUtilsFolder` creates directories and files for common utilities in a Dart
-/// project.
   _initUtilsFolder() {
     final utilsDir = Directory('lib/utils');
     utilsDir.createSync();
@@ -105,8 +95,6 @@ class Initialize {
 
   void _initFlavors() {}
 
-/// The function `_initRoutesFolder` creates a directory and two files within a specified directory
-/// structure.
   void _initRoutesFolder() {
     final routesDir = Directory('lib/routes');
     routesDir.createSync();
@@ -118,8 +106,6 @@ class Initialize {
     routerDart.create();
   }
 
-/// The _initMain function creates and writes the content of a main.dart file in Dart programming
-/// language.
   void _initMain() {
     final mainDart = File('lib/main.dart');
     mainDart.createSync();

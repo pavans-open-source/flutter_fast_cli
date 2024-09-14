@@ -9,14 +9,6 @@ class LibraryGenerator {
   String libraryFolder = '$pwd/lib/libraries';
   final libDir = Directory('$pwd/lib/libraries');
 
-  /// The function `onGenerateLibrary` generates a Dart library with a specified name and saves it in a
-  /// specific directory structure.
-  ///
-  /// Args:
-  ///   libraryName (String): The `onGenerateLibrary` function takes a `libraryName` parameter, which is
-  /// used to generate a library template in Dart. The function creates a class inside a library folder
-  /// based on the provided `libraryName`. If `libraryName` is not provided, it defaults to an empty
-  /// string.
   onGenerateLibrary(String? libraryName) {
     try {
       bool alreadyExist = _checkLibraryExists(libraryName);

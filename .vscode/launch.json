@@ -2,12 +2,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Dart: Run main.dart",
+            "name": "Dart: Run with help",
             "type": "dart",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/help.dart",
+            "program": "${workspaceFolder}/bin/flutter_fast.dart",
             "args": [
-                "-h",
+                "--flavors",
+                "dev",
+                "uat",
+                "prod",
             ]
         },
         {
