@@ -82,7 +82,7 @@ class _${capitalizedCamelCase}ScreenState extends State<${capitalizedCamelCase}S
 ''';
 
     final controllerTemplate = '''
-import '../../../utils/controllers/feature_controller.dart';
+import '../../../utils/global_controller/feature_controller.dart';
 
 class ${capitalizedCamelCase}ScreenController extends FeatureController {
   @override
@@ -113,6 +113,12 @@ sealed class ${capitalizedCamelCase}ScreenState {}
 final class ${capitalizedCamelCase}ScreenInitial extends ${capitalizedCamelCase}ScreenState {}
 ''';
 
+    final repositoryTemplate = '''
+class ${capitalizedCamelCase}Repository {
+
+}
+''';
+
     _writeContentToFiles(
       featureName,
       feturePath(featureName),
@@ -120,6 +126,7 @@ final class ${capitalizedCamelCase}ScreenInitial extends ${capitalizedCamelCase}
       controllerTemplate,
       cubitTemplate,
       cubitStateTemplate,
+      repositoryTemplate,
     );
 
     print('Feature \'$featureName\' has been created successfully.');
@@ -132,6 +139,7 @@ final class ${capitalizedCamelCase}ScreenInitial extends ${capitalizedCamelCase}
     String controllerTemplate,
     String cubitTemplate,
     String cubitStateTemplate,
+    String repositoryTemplate,
   ) {
     final directories = [
       '$featurePath/views',
@@ -145,6 +153,7 @@ final class ${capitalizedCamelCase}ScreenInitial extends ${capitalizedCamelCase}
       'assets/$featureName/icons',
       '$featurePath/static/network',
       '$featurePath/static/models',
+      '$featurePath/repository'
     ];
 
     for (var dir in directories) {
@@ -166,6 +175,11 @@ final class ${capitalizedCamelCase}ScreenInitial extends ${capitalizedCamelCase}
     _writeFile(
       '$featurePath/logic/${featureName}_cubit/${featureName}_screen_state.dart',
       cubitStateTemplate,
+    );
+
+    _writeFile(
+      '$featurePath/repository/${featureName}_repository.dart',
+      repositoryTemplate,
     );
   }
 
