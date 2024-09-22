@@ -33,7 +33,7 @@ class LibraryGenerator {
   }
 
   _checkLibraryExists(String? libraryName) {
-    bool doesExist = libDir.existsSync();
+    bool doesExist = Directory('${libDir.path}/$libraryName').existsSync();
     return doesExist;
   }
 

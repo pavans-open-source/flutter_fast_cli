@@ -8,7 +8,6 @@ class FlavorGenerator {
   void onGenerateFlavors(List<String> flavors) {
     _initializeFlavorPackage();
     _createFlavorizrFile(flavors);
-
     _runFlavorizr();
     _gitInit(flavors);
   }
@@ -79,7 +78,7 @@ class FlavorGenerator {
       );
 
       if (result.exitCode == 0) {
-        Logger.logSuccess('\nYayy... lutter_fast has created flavors\n');
+        Logger.logSuccess('\nYayy... flutter_fast has created flavors\n');
       } else {
         Logger.logWarning('Error: ${result.stderr}');
       }
@@ -191,8 +190,8 @@ flavors:
       flavorizrContent.writeln('      app:');
       flavorizrContent.writeln('        name: "$flavor App"');
       flavorizrContent.writeln('      android:');
-      flavorizrContent
-          .writeln('        applicationId: "$orgName.${flavor.toLowerCase()}"');
+      flavorizrContent.writeln(
+          '        applicationId: "$orgName.${flavor.toLowerCase() == 'uat' ? 'app' : flavor.toLowerCase()}"');
       flavorizrContent.writeln('      ios:');
       flavorizrContent
           .writeln('        bundleId: "$orgName.${flavor.toLowerCase()}"');

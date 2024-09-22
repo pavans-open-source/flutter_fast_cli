@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import '../logger/logger.dart';
+import '../commands/flavor_generator.dart';
 
 class InitializeFast {
   initializeFastStructure() {
@@ -15,7 +16,7 @@ class InitializeFast {
 
   _createFeatureFolder() {
     try {
-      final featureDir = Directory('lib/feature');
+      final featureDir = Directory('lib/features');
       featureDir.createSync();
     } catch (e) {
       Logger.logError(e.toString());
@@ -93,7 +94,9 @@ class InitializeFast {
     // Static
   }
 
-  void _initFlavors() {}
+  void _initFlavors() {
+    FlavorGenerator().onGenerateFlavors(['dev', 'prod', 'uat']);
+  }
 
   void _initRoutesFolder() {
     final routesDir = Directory('lib/routes');
@@ -104,6 +107,9 @@ class InitializeFast {
 
     routesDart.create();
     routerDart.create();
+
+    routesDart.writeAsString(_routesFile);
+    routerDart.writeAsString(_routerFile);
   }
 
   void _initMain() {
@@ -113,6 +119,62 @@ class InitializeFast {
     mainDart.writeAsStringSync(_mainDart);
   }
 }
+
+final _routerFile = '''
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../router/routes.dart';
+
+class AppRouter {
+class Router {
+  static final AppRouter _appRouter = AppRouter._internal();
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+
+  late GoRouter goRouter;
+
+  factory AppRouter() {
+    return _appRouter;
+  }
+
+  AppRouter._internal();
+
+  List<RouteBase> get _routes {
+    return <RouteBase>[];
+  }
+
+  GoRoute route({
+    required String name,
+    Offset? offset,
+    required Function(BuildContext context, GoRouterState state) builder,
+  }) =>
+      GoRoute(
+        name: name,
+        path: name,
+        pageBuilder: (context, state) => builder(context, state),
+      );
+
+  void init() {
+    goRouter = GoRouter(
+      initialLocation: '',
+      routes: _routes,
+      navigatorKey: navigatorKey,
+      redirect: null,
+      errorBuilder: (context, state) {
+        return const Scaffold(
+          body: Center(
+            child: Text('Page not found'),
+          ),
+        );
+      },
+    );
+  }
+}
+''';
+
+final _routesFile = '''
+class Routes {}
+''';
 
 final _pubspecYaml = '''
 name: starter_template
@@ -584,9 +646,19 @@ abstract class FeatureController {
 
 final _mainDart = '''
 import 'package:flutter/material.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
+
 
 void main(){
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  final storage = await HydratedStorage.build(
+    storageDirectory: await getApplicationDocumentsDirectory(),
+  );
+  HydratedBlocOverrides.runZoned(
+    () => runApp(MyApp()),
+    storage: storage,
+  );
 }
 
 class MyApp extends StatelessWidget {

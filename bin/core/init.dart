@@ -8,6 +8,7 @@ import '../commands/asset_generator.dart';
 import '../commands/feature_generator.dart';
 import '../commands/library_generator.dart';
 import '../commands/flavor_generator.dart';
+import '../commands/cicd_generator.dart';
 
 class Init {
   onInit(List<String> arguments) {
@@ -51,6 +52,10 @@ class Init {
         'flavors',
         abbr: 'v',
         help: 'Generate flavors for the project.',
+      )
+      ..addOption(
+        'cicd',
+        help: 'Initialize CICD in your project...',
       );
 
     return parser;
@@ -77,6 +82,10 @@ class Init {
       } else if (argResult.multiOption('flavors').isNotEmpty) {
         List<String> flavors = argResult['flavors'];
         FlavorGenerator().onGenerateFlavors(flavors);
+      } else if (argResult.option('cicd')?.isNotEmpty ?? false) {
+        final provider = argResult['cicd'];
+        print('provider : $provider');
+        CicdGenerator().onCicdGenerate(provider);
       }
     } catch (e) {
       Logger.logError('${e.toString()}\n');

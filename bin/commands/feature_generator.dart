@@ -12,6 +12,10 @@ class FeatureGenerator {
     _validateFeatureName(featureName);
     _checkFeatureExists(featureName);
     _createAFeatureWithContents(featureName);
+    _createRoute(
+      featureName,
+      featureFolder,
+    );
   }
 
   _validateFeatureName(String? featureName) {
@@ -185,5 +189,43 @@ class ${capitalizedCamelCase}Repository {
 
   void _writeFile(String filePath, String content) {
     File(filePath).writeAsStringSync(content);
+  }
+
+  void _createRoute(
+    String? featureName,
+    String featurePath,
+  ) {
+    final routers = 'lib/routes/router.dart';
+    final routes = 'lib/routes/routes.dart';
+
+    if (!File(routers).existsSync()) {
+      File(routers).createSync(recursive: true);
+    }
+
+    if (!File(routes).existsSync()) {
+      File(routes).createSync(recursive: true);
+    }
+
+    // Add to routes
+    final routesContent = File(routes).readAsStringSync();
+
+    routesContent.replaceFirst('class Routes {',
+        'class Routes {\n  static const String ${Formatters().toCamelCase(featureName!)} = r\'${'/featureName'};');
+
+    File(routes).writeAsStringSync(routesContent);
+
+    // Add to router
+    final routerContent = File(routes).readAsStringSync();
+    routerContent.replaceFirst('import',
+        'import $featurePath/$featureName/views/${featureName}_screen.dart;/n import ');
+    routerContent.replaceFirst('return <RouteBase>[', '''return <RouteBase>[
+      route(
+        name: Routes.${Formatters().toCamelCase(featureName)},
+        builder: (context, state) => routeChild(
+          context,
+          state,
+          child: ${Formatters().capitalize(Formatters().toCamelCase(featureName))}Screen,
+        ),
+      ),''');
   }
 }
