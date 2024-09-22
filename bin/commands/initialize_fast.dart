@@ -123,10 +123,9 @@ class InitializeFast {
 final _routerFile = '''
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../router/routes.dart';
+import '../routes/routes.dart';
 
 class AppRouter {
-class Router {
   static final AppRouter _appRouter = AppRouter._internal();
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
@@ -207,6 +206,7 @@ dependencies:
   cached_network_image: ^3.4.1
   lottie: ^3.1.2
   common_utilities_flutter: ^0.1.6
+  go_router: ^14.2.7
 
 dev_dependencies:
   flutter_test:
