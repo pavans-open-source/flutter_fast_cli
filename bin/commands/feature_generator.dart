@@ -4,7 +4,7 @@ import '../utils/formatters.dart';
 import '../logger/logger.dart';
 
 class FeatureGenerator {
-   final String featureFolder = 'lib/features';
+  final String featureFolder = 'lib/features';
 
   String featurePath(String? featureName) => '$featureFolder/$featureName';
 
@@ -197,11 +197,12 @@ class FeatureGenerator {
     Logger.logSuccess('Codebase formatted and fixed.');
     exit(0);
   }
+}
 
-  // Template generators
-  String _createViewTemplate(
-      String featureName, String camelCase, String capitalizedCamelCase) {
-    return '''
+// Template generators
+String _createViewTemplate(
+    String featureName, String camelCase, String capitalizedCamelCase) {
+  return '''
 import 'package:flutter/material.dart';
 import '../controllers/${featureName}_screen_controller.dart';
 
@@ -235,10 +236,10 @@ class _${capitalizedCamelCase}ScreenState extends State<${capitalizedCamelCase}S
   }
 }
 ''';
-  }
+}
 
-  String _createControllerTemplate(String capitalizedCamelCase) {
-    return '''
+String _createControllerTemplate(String capitalizedCamelCase) {
+  return '''
 import '../../../utils/global_controller/feature_controller.dart';
 
 class ${capitalizedCamelCase}ScreenController extends FeatureController {
@@ -249,10 +250,10 @@ class ${capitalizedCamelCase}ScreenController extends FeatureController {
   void dispose() {}
 }
 ''';
-  }
+}
 
-  String _createCubitTemplate(String camelCase, String capitalizedCamelCase) {
-    return '''
+String _createCubitTemplate(String camelCase, String capitalizedCamelCase) {
+  return '''
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
@@ -262,11 +263,11 @@ class ${capitalizedCamelCase}ScreenCubit extends Cubit<${capitalizedCamelCase}Sc
   ${capitalizedCamelCase}ScreenCubit() : super(${capitalizedCamelCase}ScreenInitial());
 }
 ''';
-  }
+}
 
-  String _createCubitStateTemplate(
-      String camelCase, String capitalizedCamelCase) {
-    return '''
+String _createCubitStateTemplate(
+    String camelCase, String capitalizedCamelCase) {
+  return '''
 part of '${camelCase}_screen_cubit.dart';
 
 @immutable
@@ -274,13 +275,12 @@ sealed class ${capitalizedCamelCase}ScreenState {}
 
 final class ${capitalizedCamelCase}ScreenInitial extends ${capitalizedCamelCase}ScreenState {}
 ''';
-  }
+}
 
-  String _createRepositoryTemplate(String capitalizedCamelCase) {
-    return '''
+String _createRepositoryTemplate(String capitalizedCamelCase) {
+  return '''
 class ${capitalizedCamelCase}Repository {
 
 }
 ''';
-  }
 }
