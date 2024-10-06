@@ -21,7 +21,15 @@ class LibraryGenerator {
       }
     } catch (e) {
       Logger.logError('Error generating library: ${e.toString()}');
+    } finally {
+      _fix();
     }
+  }
+
+  void _fix() {
+    Logger.logDebug('Cleaning up...');
+    Process.runSync('dart', ['fix', '--apply']);
+    Process.runSync('dart', ['format', '.']);
   }
 
   void _askToOverride(String libraryName) {
@@ -41,7 +49,7 @@ class LibraryGenerator {
 
   bool _checkLibraryExists(String libraryName) {
     bool doesExist = Directory('${libDir.path}/$libraryName').existsSync();
-    Logger.logDebug('Checking if library exists: $doesExist');
+    // Logger.logDebug('Checking if library exists: $doesExist');
     return doesExist;
   }
 
@@ -56,14 +64,14 @@ class ${Formatters().capitalize(libraryName)} {
 }
 ''';
 
-      Logger.logDebug('Creating library directory and file: $filePath');
+      Logger.logWarning('\nCreating library directory and file\n');
 
       if (!file.existsSync()) {
         file.createSync(recursive: true);
       }
 
       file.writeAsStringSync(libraryTemplate);
-      Logger.logSuccess('Library "$libraryName" created successfully.');
+      Logger.logSuccess('Library "$libraryName" created successfully.\n');
     } catch (e) {
       Logger.logError('Failed to write library content: ${e.toString()}');
     }

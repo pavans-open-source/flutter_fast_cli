@@ -22,7 +22,15 @@ class FeatureGenerator {
     } catch (e) {
       Logger.logError('\nError generating feature: $e\n');
       exit(1);
+    } finally {
+      _fix();
     }
+  }
+
+  void _fix() {
+    Logger.logDebug('Cleaning up...');
+    Process.runSync('dart', ['fix', '--apply']);
+    Process.runSync('dart', ['format', '.']);
   }
 
   void _validateFeatureName(String? featureName) {

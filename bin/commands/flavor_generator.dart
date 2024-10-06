@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:io';
 import 'package:dcli/dcli.dart';
 import '../logger/logger.dart';
 import '../common/pubspec_package_exist.dart';
@@ -10,6 +9,13 @@ class FlavorGenerator {
     _createFlavorizrFile(flavors);
     _runFlavorizr();
     _gitInit(flavors);
+    _fix();
+  }
+
+  void _fix() {
+    Logger.logDebug('Cleaning up...');
+    Process.runSync('dart', ['fix', '--apply']);
+    Process.runSync('dart', ['format', '.']);
   }
 
   void _gitInit(List<String> flavors) {

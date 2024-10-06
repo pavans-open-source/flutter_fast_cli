@@ -12,6 +12,8 @@ class InitializeFast {
     _initRoutesFolder();
     _initFlavors();
     _initMain();
+    _fix();
+    exit(0);
   }
 
   _createFeatureFolder() {
@@ -20,6 +22,7 @@ class InitializeFast {
       featureDir.createSync();
     } catch (e) {
       Logger.logError(e.toString());
+      exit(0);
     }
   }
 
@@ -29,6 +32,7 @@ class InitializeFast {
       librariesDir.createSync();
     } catch (e) {
       Logger.logError(e.toString());
+      exit(0);
     }
   }
 
@@ -46,9 +50,12 @@ class InitializeFast {
       pubSpecFile.copySync(pubSpecBkpFile.path);
       Logger.logSuccess('Backup created: pubspec.yaml.bak');
 
-      pubSpecFile.writeAsString(_pubspecYaml);
+      _addPackages();
+
+      // pubSpecFile.writeAsString(_pubspecYaml);
     } catch (e) {
       Logger.logError(e.toString());
+      exit(0);
     }
   }
 
@@ -118,6 +125,73 @@ class InitializeFast {
 
     mainDart.writeAsStringSync(_mainDart);
   }
+
+  void _addPackages() {
+    Logger.logDebug('Adding flavorizr...');
+    Process.runSync('dart', ['pub', 'add', 'flutter_flavorizr']);
+    Logger.logSuccess('Adding flavorizr Completed...');
+
+    // Process.runSync('dart', ['pub', 'add', 'path_provider']);
+    // Process.runSync('dart', ['pub', 'add', 'encrypt']);
+
+    Logger.logDebug('Adding http...');
+    Process.runSync('dart', ['pub', 'add', 'http']);
+    Logger.logSuccess('Adding http Completed...');
+
+    Logger.logDebug('Adding api_cache_manager...');
+    Process.runSync('dart', ['pub', 'add', 'api_cache_manager']);
+    Logger.logSuccess('Adding api_cache_manager Completed...');
+
+    Logger.logDebug('Adding http_requester...');
+    Process.runSync('dart', ['pub', 'add', 'http_requester']);
+    Logger.logSuccess('Adding http_requester Completed...');
+
+    Logger.logDebug('Adding cached_network_image...');
+    Process.runSync('dart', ['pub', 'add', 'cached_network_image']);
+    Logger.logSuccess('Adding cached_network_image Completed...');
+
+    Logger.logDebug('Adding lottie...');
+    Process.runSync('dart', ['pub', 'add', 'lottie']);
+    Logger.logSuccess('Adding lottie Completed...');
+
+    Logger.logDebug('Adding common_utilities_flutter...');
+    Process.runSync('dart', ['pub', 'add', 'common_utilities_flutter']);
+    Logger.logSuccess('Adding common_utilities_flutter Completed...');
+
+    Logger.logDebug('Adding go_router...');
+    Process.runSync('dart', ['pub', 'add', 'go_router']);
+    Logger.logSuccess('Adding go_router Completed...');
+
+    Logger.logDebug('Adding logger...');
+    Process.runSync('dart', ['pub', 'add', 'logger']);
+    Logger.logSuccess('Adding logger Completed...');
+
+    Logger.logDebug('Adding validators...');
+    Process.runSync('dart', ['pub', 'add', 'validators']);
+    Logger.logSuccess('Adding validators Completed...');
+
+    Logger.logDebug('Adding intl...');
+    Process.runSync('dart', ['pub', 'add', 'intl']);
+    Logger.logSuccess('Adding intl Completed...');
+
+    Logger.logDebug('Adding flutter_svg...');
+    Process.runSync('dart', ['pub', 'add', 'bloc']);
+    Logger.logSuccess('Adding flutter_svg Completed...');
+
+    Logger.logDebug('Adding flutter_svg...');
+    Process.runSync('dart', ['pub', 'add', 'flutter_bloc']);
+    Logger.logSuccess('Adding flutter_bloc Completed...');
+
+    Logger.logDebug('Adding get_cubit...');
+    Process.runSync('dart', ['pub', 'add', 'get_cubit']);
+    Logger.logSuccess('Adding get_cubit Completed...');
+  }
+
+  void _fix() {
+    Logger.logDebug('Cleaning up...');
+    Process.runSync('dart', ['fix', '--apply']);
+    Process.runSync('dart', ['format', '.']);
+  }
 }
 
 final _routerFile = '''
@@ -175,47 +249,47 @@ final _routesFile = '''
 class Routes {}
 ''';
 
-final _pubspecYaml = '''
-name: starter_template
-description: "A new Flutter project."
-publish_to: 'none'
+// final _pubspecYaml = '''
+// name: starter_template
+// description: "A new Flutter project."
+// publish_to: 'none'
 
-version: 1.0.0+1
+// version: 1.0.0+1
 
-environment:
-  sdk: '>=3.4.4 <4.0.0'
+// environment:
+//   sdk: '>=3.4.4 <4.0.0'
 
-dependencies:
-  flutter:
-    sdk: flutter
+// dependencies:
+//   flutter:
+//     sdk: flutter
 
-  cupertino_icons: ^1.0.6
-  flutter_flavorizr: ^2.2.3
-  get_cubit: ^1.1.0
-  flutter_bloc: ^8.1.6
-  bloc: ^8.1.4
-  flutter_svg: ^2.0.10+1
-  intl: ^0.19.0
-  validators: ^3.0.0
-  logger: ^2.4.0
-  path_provider: ^2.1.3
-  encrypt: ^5.0.3
-  http: ^1.2.2
-  api_cache_manager: ^1.0.2
-  http_requester: ^0.0.4
-  cached_network_image: ^3.4.1
-  lottie: ^3.1.2
-  common_utilities_flutter: ^0.1.6
-  go_router: ^14.2.7
+//   cupertino_icons: ^1.0.6
+//   flutter_flavorizr: ^2.2.3
+//   get_cubit: ^1.1.0
+//   flutter_bloc: ^8.1.6
+//   bloc: ^8.1.4
+//   flutter_svg: ^2.0.10+1
+//   intl: ^0.19.0
+//   validators: ^3.0.0
+//   logger: ^2.4.0
+//   path_provider: ^2.1.3
+//   encrypt: ^5.0.3
+//   http: ^1.2.2
+//   api_cache_manager: ^1.0.2
+//   http_requester: ^0.0.4
+//   cached_network_image: ^3.4.1
+//   lottie: ^3.1.2
+//   common_utilities_flutter: ^0.1.6
+//   go_router: ^14.2.7
 
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^3.0.0
+// dev_dependencies:
+//   flutter_test:
+//     sdk: flutter
+//   flutter_lints: ^3.0.0
 
-flutter:
-  uses-material-design: true
-''';
+// flutter:
+//   uses-material-design: true
+// ''';
 
 final _errorWidgetDart = '''
 import 'package:flutter/material.dart';
@@ -646,19 +720,11 @@ abstract class FeatureController {
 
 final _mainDart = '''
 import 'package:flutter/material.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:path_provider/path_provider.dart';
 
 
 void main(){
   WidgetsFlutterBinding.ensureInitialized();
-  final storage = await HydratedStorage.build(
-    storageDirectory: await getApplicationDocumentsDirectory(),
-  );
-  HydratedBlocOverrides.runZoned(
-    () => runApp(MyApp()),
-    storage: storage,
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

@@ -18,6 +18,14 @@ class CicdGenerator {
             'Please use flutter_fast --cicd [action]   :   action - github/gitlab');
         exit(0);
     }
+    Logger.logDebug('Cleaning up...');
+    _fix();
+  }
+
+  void _fix() {
+    Logger.logDebug('Cleaning up...');
+    Process.runSync('dart', ['fix', '--apply']);
+    Process.runSync('dart', ['format', '.']);
   }
 
   void _githubCicd() {

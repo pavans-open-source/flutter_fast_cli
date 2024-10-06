@@ -5,9 +5,9 @@ class Formatters {
 
     return words.asMap().entries.map((entry) {
       if (entry.key == 0) {
-        return entry.value.toLowerCase(); 
+        return entry.value.toLowerCase();
       } else {
-        return capitalize(entry.value); 
+        return capitalize(entry.value);
       }
     }).join('');
   }
@@ -16,5 +16,4 @@ class Formatters {
     if (str.isEmpty) return str;
     return str[0].toUpperCase() + str.substring(1).toLowerCase();
   }
-
 }

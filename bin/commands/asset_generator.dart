@@ -15,7 +15,7 @@ class AssetGenerator {
     try {
       if (!pubspecFile.existsSync()) {
         Logger.logError('pubspec.yaml not found!');
-        exit(1); 
+        exit(1);
       }
 
       Logger.logSuccess('pubspec.yaml found.');
@@ -129,11 +129,19 @@ class AssetGenerator {
     }
   }
 
+  void _fix() {
+    Logger.logDebug('Cleaning up...');
+    Process.runSync('dart', ['fix', '--apply']);
+    Process.runSync('dart', ['format', '.']);
+  }
+
   Future<void> onGenerateAssets() async {
     Logger.logDebug('Starting asset generation...');
     _updatePubspec();
     Logger.logDebug('pubspec.yaml file updated successfully...!');
     _generateDartFiles();
-    Logger.logSuccess('Asset generation completed successfully.');
+    Logger.logSuccess('Asset generation completed successfully.\n');
+
+    _fix();
   }
 }
